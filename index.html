@@ -7,7 +7,29 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen"><script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAgOkuLRfV43AaoX-0JWA5wic4M4BEjSlc",
+    authDomain: "affiliatewealthhub-65633.firebaseapp.com",
+    projectId: "affiliatewealthhub-65633",
+    storageBucket: "affiliatewealthhub-65633.firebasestorage.app",
+    messagingSenderId: "217100427809",
+    appId: "1:217100427809:web:999497d4e5b7fb7f7ef960",
+    measurementId: "G-WTYK70P0HK"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 
   <!-- AUTH SECTION (Login / Signup) -->
   <div id="authSection" class="flex items-center justify-center min-h-screen px-4">
