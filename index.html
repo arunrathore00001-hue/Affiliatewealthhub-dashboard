@@ -417,3 +417,87 @@ function handleLogin(e) {
       e.preventDefault();
       const customerName = document.getElementById('leadCustomerName').value.trim();
       const phone = document.getElem
+      यह लीजिए आपके मेंबर डैशबोर्ड का पूरा कोड, जिसे आप अपनी index.html फ़ाइल में मेन टैब के नीचे पेस्ट कर सकते हैं:
+<main id="memberView" class="max-w-6xl mx-auto p-6 space-y-6">
+  <!-- Referral Link Section -->
+  <section class="bg-slate-800 border border-slate-700 p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+    <div>
+      <h2 class="text-xl font-bold text-white">आपका रेफरल लिंक</h2>
+      <p class="text-slate-400">इस लिंक को शेयर करके टीम मेंबर्स को जोड़ें।</p>
+    </div>
+    <div class="flex items-center w-full md:w-auto gap-2">
+      <input type="text" id="refLinkInput" readonly class="bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-slate-300 w-full outline-none">
+      <button onclick="copyRefLink()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-2 rounded-lg transition">कॉपी करें</button>
+    </div>
+  </section>
+
+  <!-- Stats Cards -->
+  <section class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-xl">
+      <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">कुल लीड्स (Total)</h3>
+      <p id="statTotalLeads" class="text-3xl font-bold text-white mt-1">०</p>
+    </div>
+    <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-xl">
+      <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">स्वीकृत लीड्स (Approved)</h3>
+      <p id="statApprovedLeads" class="text-3xl font-bold text-emerald-400 mt-1">०</p>
+    </div>
+    <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-xl">
+      <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">कुल कमाई (Total Earnings)</h3>
+      <p id="statTotalEarnings" class="text-3xl font-bold text-white mt-1">₹०</p>
+    </div>
+  </section>
+
+  <!-- Leads Tracking Table -->
+  <section class="bg-slate-800 border border-slate-700 rounded-2xl shadow-xl overflow-hidden">
+    <div class="p-6 border-b border-slate-700">
+      <h2 class="text-xl font-bold text-white">लीड्स ट्रैकिंग स्टेटस</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-slate-900 text-xs uppercase text-slate-400">
+          <tr>
+            <th class="px-6 py-4">कस्टमर नाम</th>
+            <th class="px-6 py-4">कैंपेन</th>
+            <th class="px-6 py-4">तारीख</th>
+            <th class="px-6 py-4 text-right">स्टेटस</th>
+          </tr>
+        </thead>
+        <tbody id="memberLeadsTableBody" class="divide-y divide-slate-700">
+          <!-- Leads dynamically load here -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+function renderMemberDashboard() {
+  const stats = { totalLeads: 125, approvedLeads: 98, totalEarnings: 24500 };
+  const leads = [
+    { customer: 'Amit Sharma', campaign: 'Demat Account', date: '2026-09-25', status: 'Approved' },
+    { customer: 'Priya Verma', campaign: 'Credit Card', date: '2026-09-24', status: 'Pending' },
+    { customer: 'Rahul Kumar', campaign: 'Crypto Exchange', date: '2026-09-23', status: 'Approved' }
+  ];
+
+  document.getElementById('statTotalLeads').textContent = stats.totalLeads;
+  document.getElementById('statApprovedLeads').textContent = stats.approvedLeads;
+  document.getElementById('statTotalEarnings').textContent = `₹${stats.totalEarnings.toLocaleString('en-IN')}`;
+
+  const tableBody = document.getElementById('memberLeadsTableBody');
+  tableBody.innerHTML = leads.map(lead => `
+    <tr>
+      <td class="px-6 py-4 font-medium text-white">${lead.customer}</td>
+      <td class="px-6 py-4 text-slate-300">${lead.campaign}</td>
+      <td class="px-6 py-4 text-slate-400">${lead.date}</td>
+      <td class="px-6 py-4 text-right">
+        <span class="px-3 py-1 rounded-full text-xs font-semibold ${lead.status === 'Approved' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}">
+          ${lead.status}
+        </span>
+      </td>
+    </tr>
+  `).join('');
+}
+</script>
+
+क्या आप इसे टेस्ट करना चाहेंगे?
+  
