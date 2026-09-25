@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Affiliate Partner & Admin Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
+
+  <!-- AUTH SECTION (Login / Signup) -->
+  <div id="authSection" class="flex items-center justify-center min-h-screen px-4">
+    <div class="bg-slate-800 border border-slate-700 p-8 rounded-2xl shadow-2xl w-full max-w-md">
+      <div class="text-center mb-6">
+        <h1 class="text-2xl font-bold text-emerald-400"><i class="fa-solid fa-chart-line mr-2"></i>Affiliate Network</h1>
+        <p class="text-sm text-slate-400 mt-1">टीम मेंबर और एडमिन लॉगिन</p>
+      </div>
+
+      <div class="flex border-b border-slate-700 mb-6">
+        <button id="loginTab" onclick="switchAuthTab('login')" class="flex-1 py-2 font-semibold text-emerald-400 border-b-2 border-emerald-400">लॉगिन</button>
+        <button id="signupTab" onclick="switchAuthTab('signup')" class="flex-1 py-2 font-semibold text-slate-400">नया मेंबर रजिस्ट्रेशन</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">ईमेल</label>
+          <input type="email" id="loginEmail" required placeholder="admin@portal.com या मेंबर ईमेल" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">पासवर्ड</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 font-semibold py-2.5 rounded-lg transition duration-200">डैशबोर्ड खोलें</button>
+        <p class="text-xs text-center text-slate-500 mt-2">डिफ़ॉल्ट एडमिन: <span class="text-emerald-400">admin@portal.com</span> / पास: <span class="text-emerald-400">admin123</span></p>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signupForm" onsubmit="handleSignup(event)" class="space-y-4 hidden">
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">पूरा नाम</label>
+          <input type="text" id="signupName" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">ईमेल आईडी</label>
+          <input type="email" id="signupEmail" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">UPI ID (पेआउट पाने के लिए)</label>
+          <input type="text" id="signupUpi" required placeholder="name@upi" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">पासवर्ड</label>
+          <input type="password" id="signupPassword" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 font-semibold py-2.5 rounded-lg transition duration-200">पार्टनर अकाउंट बनाएं</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <div id="dashboardSection" class="hidden">
+    <!-- Navbar -->
+    <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex justify-between items-center sticky top-0 z-30">
+      <div class="flex items-center space-x-3">
+        <div class="h-10 w-10 bg-emerald-500 rounded-full flex items-center justify-center font-bold text-slate-950" id="userAvatar">U</div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="font-bold text-white text-base leading-tight" id="userNameDisplay">User Name</h2>
+            <span id="roleBadge" class="text-[10px] px-2 py-0.5 rounded font-bold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Member</span>
+          </div>
+          <span class="text-xs text-slate-400 font-mono" id="userUpiDisplay">UPI ID</span>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-3">
+        <div id="adminNavToggle" class="hidden">
+          <button onclick="toggleDashboardView('member')" id="btnViewMember" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-500 text-slate-950">माय डैशबोर्ड</button>
+          <button onclick="toggleDashboardView('admin')" id="btnViewAdmin" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-700 text-slate-300">एडमिन पैनल</button>
+        </div>
+        <button onclick="handleLogout()" class="text-xs bg-slate-700 hover:bg-red-500/20 hover:text-red-400 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-600 transition">
+          <i class="fa-solid fa-right-from-bracket mr-1"></i> बाहर निकलें
+        </button>
+      </div>
+    </header>
+
+    <!-- 1. MEMBER VIEW -->
+    <main id="memberView" class="max-w-6xl mx-auto p-6 space-y-6">
+      <!-- Referral Link Banner -->
+      <div class="bg-slate-800 border border-slate-700 p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <p class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">पर्सनल ट्रैकिंग लिंक</p>
+          <p class="text-xs text-slate-400">इस लिंक को शेयर करें या इसके ज़रिए अपनी लीड्स रजिस्टर करें।</p>
+        </div>
+        <div class="flex w-full md:w-auto gap-2">
+          <input type="text" id="refLinkInput" readonly class="bg-slate-900 border border-slate-700 text-slate-300 px-4 py-2 rounded-lg text-xs md:text-sm w-full md:w-80 font-mono">
+          <button onclick="copyRefLink()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-2 rounded-lg text-sm transition">कॉपी</button>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-slate-800 border border-slate-700 p-5 rounded-xl">
+          <p class="text-xs text-slate-400">कुल सबमिट लीड्स</p>
+          <h3 class="text-3xl font-extrabold text-white mt-1" id="statTotalLeads">0</h3>
+        </div>
+        <div class="bg-slate-800 border border-slate-700 p-5 rounded-xl">
+          <p class="text-xs text-slate-400">सफल (Approved) लीड्स</p>
+          <h3 class="text-3xl font-extrabold text-emerald-400 mt-1" id="statApprovedLeads">0</h3>
+        </div>
+        <div class="bg-slate-800 border border-slate-700 p-5 rounded-xl">
+          <p class="text-xs text-slate-400">कुल अर्जित कमीशन</p>
+          <h3 class="text-3xl font-extrabold text-emerald-400 mt-1" id="statEarnings">₹0</h3>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- New Lead Submit Form -->
+        <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl h-fit">
+          <h3 class="text-base font-bold text-white mb-4"><i class="fa-solid fa-user-plus text-emerald-400 mr-2"></i>नई लीड जोड़ें</h3>
+          <form onsubmit="handleLeadSubmit(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">कस्टमर का नाम</label>
+              <input type="text" id="leadCustomerName" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">कस्टमर फ़ोन नंबर / Ref ID</label>
+              <input type="text" id="leadCustomerPhone" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">कैंपेन चुनें</label>
+              <select id="leadCampaignSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                <!-- Campaigns loaded dynamically -->
+              </select>
+            </div>
+            <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-lg text-sm transition">लीड सबमिट करें</button>
+          </form>
+        </div>
+
+        <!-- Leads Tracking Table -->
+        <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl lg:col-span-2">
+          <h3 class="text-base font-bold text-white mb-4"><i class="fa-solid fa-list-check text-emerald-400 mr-2"></i>आपकी सबमिट लीड्स और पेआउट स्टेटस</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="text-xs uppercase bg-slate-900 text-slate-400 border-b border-slate-700">
+                <tr>
+                  <th class="py-3 px-3">कस्टमर</th>
+                  <th class="py-3 px-3">कैंपेन</th>
+                  <th class="py-3 px-3">तारीख</th>
+                  <th class="py-3 px-3">स्टेटस</th>
+                  <th class="py-3 px-3">पेआउट</th>
+                </tr>
+              </thead>
+              <tbody id="memberLeadsTableBody" class="divide-y divide-slate-700"></tbody>
+            </table>
+          </div>
+          <p id="noMemberLeadsMsg" class="text-center text-sm text-slate-500 mt-6 hidden">अभी तक कोई लीड दर्ज नहीं की गई है।</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- 2. ADMIN VIEW -->
+    <main id="adminView" class="max-w-6xl mx-auto p-6 space-y-6 hidden">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-white">एडमिन मास्टर कंट्रोल</h2>
+          <p class="text-xs text-slate-400">सभी मेंबर्स की लीड्स चेक करें, अप्रूव/रिजेक्ट करें और नए कैंपेन जोड़ें।</p>
+        </div>
+      </div>
+
+      <!-- Add New Campaign -->
+      <div class="bg-slate-800 border border-slate-700 p-5 rounded-2xl">
+        <h3 class="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-3"><i class="fa-solid fa-bullhorn mr-2"></i>नया कैंपेन या ऑफ़र जोड़ें</h3>
+        <form onsubmit="handleCreateCampaign(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <input type="text" id="newCampaignName" required placeholder="कैंपेन का नाम (उदा. Angel One Demat)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+          <input type="number" id="newCampaignPayout" required placeholder="प्रति लीड पेआउट (₹)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+          <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2 rounded-lg text-sm transition">कैंपेन लाइव करें</button>
+        </form>
+      </div>
+
+      <!-- Master Leads Verification Table -->
+      <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl">
+        <h3 class="text-base font-bold text-white mb-4"><i class="fa-solid fa-shield-halved text-emerald-400 mr-2"></i>सभी मेंबर्स की लीड्स (Approval Queue)</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="text-xs uppercase bg-slate-900 text-slate-400 border-b border-slate-700">
+              <tr>
+                <th class="py-3 px-3">टीम मेंबर</th>
+                <th class="py-3 px-3">कस्टमर डिटेल्स</th>
+                <th class="py-3 px-3">कैंपेन</th>
+                <th class="py-3 px-3">पेआउट</th>
+                <th class="py-3 px-3">स्टेटस</th>
+                <th class="py-3 px-3 text-right">कार्रवाई (Action)</th>
+              </tr>
+            </thead>
+            <tbody id="adminLeadsTableBody" class="divide-y divide-slate-700"></tbody>
+          </table>
+        </div>
+        <p id="noAdminLeadsMsg" class="text-center text-sm text-slate-500 mt-6 hidden">किसी भी मेंबर ने अभी तक लीड सबमिट नहीं की है।</p>
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    // Initial Seeds
+    const DEFAULT_CAMPAIGNS = [
+      { id: 1, name: "Demat Account Opening", payout: 400 },
+      { id: 2, name: "Zero Balance Savings Account", payout: 250 },
+      { id: 3, name: "Credit Card Card Apply", payout: 800 }
+    ];
+
+    const ADMIN_USER = {
+      name: "Super Admin",
+      email: "admin@portal.com",
+      password: "admin123",
+      upi: "admin@bank",
+      role: "admin",
+      refCode: "ADMIN-001"
+    };
+
+    // State
+    let currentUser = JSON.parse(localStorage.getItem('aff_current_user')) || null;
+    let users = JSON.parse(localStorage.getItem('aff_users')) || [ADMIN_USER];
+    let leads = JSON.parse(localStorage.getItem('aff_leads')) || [];
+    let campaigns = JSON.parse(localStorage.getItem('aff_campaigns')) || DEFAULT_CAMPAIGNS;
+
+    window.onload = function() {
+      // Admin सुनिश्चित करें
+      if (!users.find(u => u.email === ADMIN_USER.email)) {
+        users.push(ADMIN_USER);
+        localStorage.setItem('aff_users', JSON.stringify(users));
+      }
+      if (currentUser) {
+        showApp();
+      } else {
+        showAuth();
+      }
+    };
+
+    function switchAuthTab(tab) {
+      const loginTab = document.getElementById('loginTab');
+      const signupTab = document.getElementById('signupTab');
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+
+      if (tab === 'login') {
+        loginTab.className = "flex-1 py-2 font-semibold text-emerald-400 border-b-2 border-emerald-400";
+        signupTab.className = "flex-1 py-2 font-semibold text-slate-400";
+        loginForm.classList.remove('hidden');
+        signupForm.classList.add('hidden');
+      } else {
+        signupTab.className = "flex-1 py-2 font-semibold text-emerald-400 border-b-2 border-emerald-400";
+        loginTab.className = "flex-1 py-2 font-semibold text-slate-400";
+        signupForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+      }
+    }
+
+    function handleSignup(e) {
+      e.preventDefault();
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+      const upi = document.getElementById('signupUpi').value.trim();
+      const password = document.getElementById('signupPassword').value;
+
+      if (users.find(u => u.email === email)) {
+        alert('यह ईमेल पहले से रजिस्टर्ड है! कृपया लॉगिन करें।');
+        return;
+      }
+
+      const refCode = 'REF-' + Math.floor(100000 + Math.random() * 900000);
+      const newUser = { name, email, upi, password, role: 'member', refCode };
+      users.push(newUser);
+      localStorage.setItem('aff_users', JSON.stringify(users));
+
+      currentUser = newUser;
+      localStorage.setItem('aff_current_user', JSON.stringify(currentUser));
+      showApp();
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const password = document.getElementById('loginPassword').value;
+
+      const user = users.find(u => u.email === email && u.password === password);
+      if (!user) {
+        alert('गलत ईमेल या पासवर्ड!');
+        return;
+      }
+
+      currentUser = user;
+      localStorage.setItem('aff_current_user', JSON.stringify(currentUser));
+      showApp();
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('aff_current_user');
+      currentUser = null;
+      showAuth();
+    }
+
+    function showApp() {
+      document.getElementById('authSection').classList.add('hidden');
+      document.getElementById('dashboardSection').classList.remove('hidden');
+
+      document.getElementById('userNameDisplay').textContent = currentUser.name;
+      document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+      document.getElementById('userUpiDisplay').textContent = `UPI: ${currentUser.upi}`;
+
+      const roleBadge = document.getElementById('roleBadge');
+      const adminNavToggle = document.getElementById('adminNavToggle');
+
+      if (currentUser.role === 'admin') {
+        roleBadge.textContent = 'Admin';
+        roleBadge.className = "text-[10px] px-2 py-0.5 rounded font-bold uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30";
+        adminNavToggle.classList.remove('hidden');
+        toggleDashboardView('admin');
+      } else {
+        roleBadge.textContent = 'Member';
+        roleBadge.className = "text-[10px] px-2 py-0.5 rounded font-bold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+        adminNavToggle.classList.add('hidden');
+        toggleDashboardView('member');
+      }
+
+      const currentUrl = window.location.origin + window.location.pathname;
+      document.getElementById('refLinkInput').value = `${currentUrl}?ref=${currentUser.refCode}`;
+
+      populateCampaignDropdown();
+      renderMemberDashboard();
+      renderAdminDashboard();
+    }
+
+    function showAuth() {
+      document.getElementById('authSection').classList.remove('hidden');
+      document.getElementById('dashboardSection').classList.add('hidden');
+    }
+
+    function toggleDashboardView(view) {
+      const memberView = document.getElementById('memberView');
+      const adminView = document.getElementById('adminView');
+      const btnMember = document.getElementById('btnViewMember');
+      const btnAdmin = document.getElementById('btnViewAdmin');
+
+      if (view === 'admin') {
+        adminView.classList.remove('hidden');
+        memberView.classList.add('hidden');
+        btnAdmin.className = "px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-500 text-slate-950";
+        btnMember.className = "px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-700 text-slate-300";
+      } else {
+        memberView.classList.remove('hidden');
+        adminView.classList.add('hidden');
+        btnMember.className = "px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-500 text-slate-950";
+        btnAdmin.className = "px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-700 text-slate-300";
+      }
+    }
+
+    function populateCampaignDropdown() {
+      const select = document.getElementById('leadCampaignSelect');
+      select.innerHTML = '';
+      campaigns.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = JSON.stringify({ name: c.name, payout: c.payout });
+        opt.textContent = `${c.name} (पेआउट: ₹${c.payout})`;
+        select.appendChild(opt);
+      });
+    }
+
+    function handleCreateCampaign(e) {
+      e.preventDefault();
+      const name = document.getElementById('newCampaignName').value.trim();
+      const payout = parseInt(document.getElementById('newCampaignPayout').value);
+
+      campaigns.push({ id: Date.now(), name, payout });
+      localStorage.setItem('aff_campaigns', JSON.stringify(campaigns));
+
+      document.getElementById('newCampaignName').value = '';
+      document.getElementById('newCampaignPayout').value = '';
+
+      populateCampaignDropdown();
+      alert('नया कैंपेन सफलतापूर्वक जुड़ गया!');
+    }
+
+    function handleLeadSubmit(e) {
+      e.preventDefault();
+      const customerName = document.getElementById('leadCustomerName').value.trim();
+      const phone = document.getElem
