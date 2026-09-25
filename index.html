@@ -303,17 +303,24 @@
       showApp();
     }
 
-    function handleLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-      const password = document.getElementById('loginPassword').value;
+function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
 
-      const user = users.find(u => u.email === email && u.password === password);
-      if (!user) {
-        alert('गलत ईमेल या पासवर्ड!');
-        return;
-      }
-
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      currentUser = user;
+      localStorage.setItem('aff_current_user', JSON.stringify(currentUser));
+      showApp();
+    })
+    .catch((error) => {
+      alert('गलत ईमेल या पासवर्ड!');
+    });
+}
+  
       currentUser = user;
       localStorage.setItem('aff_current_user', JSON.stringify(currentUser));
       showApp();
